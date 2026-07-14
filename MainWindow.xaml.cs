@@ -234,7 +234,42 @@ public partial class MainWindow : Window
 
             SetStatus(T("InstallingApkStatus"));
             AdbCommandResult result = await adbService.InstallApkAsync(device.Serial, apkPath, new Progress<string>(SetStatus));
-            SetStatus(result.Success ? F("InstallCompleteStatus", Path.GetFileName(apkPath)) : result.CombinedText);
+            if (!result.Success && IsUpdateIncompatible(result))
+            {
+                if (string.IsNullOrWhiteSpace(packageName))
+                {
+                    SetStatus(T("ForceInstallPackageMissing"));
+                    MessageBox.Show(this, result.CombinedText, T("ApkInstallFailedTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                bool forceInstall = ShowForceInstallDialog(packageName, result.CombinedText);
+                if (!forceInstall)
+                {
+                    SetStatus(result.CombinedText);
+                    return;
+                }
+
+                SetStatus(F("ForceInstallingStatus", packageName));
+                AdbCommandResult uninstallResult = await adbService.UninstallPackageAsync(device.Serial, packageName);
+                if (!uninstallResult.Success)
+                {
+                    SetStatus(uninstallResult.CombinedText);
+                    MessageBox.Show(this, uninstallResult.CombinedText, T("UninstallFailedTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                result = await adbService.InstallApkAsync(device.Serial, apkPath, new Progress<string>(SetStatus));
+            }
+
+            if (result.Success && !string.IsNullOrWhiteSpace(packageName))
+            {
+                await StartInstalledPackageAsync(device.Serial, packageName);
+            }
+            else
+            {
+                SetStatus(result.Success ? F("InstallCompleteStatus", Path.GetFileName(apkPath)) : result.CombinedText);
+            }
             MessageBox.Show(this, result.CombinedText, result.Success ? T("ApkInstallSuccessTitle") : T("ApkInstallFailedTitle"),
                 MessageBoxButton.OK, result.Success ? MessageBoxImage.Information : MessageBoxImage.Error);
         }
@@ -264,6 +299,103 @@ public partial class MainWindow : Window
         MessageBox.Show(this, result.CombinedText, result.Success ? T("UninstallSuccessTitle") : T("UninstallFailedTitle"),
             MessageBoxButton.OK, result.Success ? MessageBoxImage.Information : MessageBoxImage.Error);
         await LoadPackagesAsync();
+    }
+
+    private async Task StartInstalledPackageAsync(string serial, string packageName)
+    {
+        SetStatus(F("StartingAppStatus", packageName));
+        AdbCommandResult startResult = await adbService.StartPackageAsync(serial, packageName);
+        SetStatus(startResult.Success ? F("InstallCompleteStatus", packageName) : F("StartAppFailedStatus", startResult.CombinedText));
+    }
+
+    private bool ShowForceInstallDialog(string packageName, string errorText)
+    {
+        bool accepted = false;
+        var dialog = new Window
+        {
+            Title = T("ApkInstallFailedTitle"),
+            Owner = this,
+            Width = 560,
+            MinHeight = 260,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            ResizeMode = ResizeMode.NoResize,
+            ShowInTaskbar = false,
+            Background = Brushes.White
+        };
+
+        var root = new Grid { Margin = new Thickness(18) };
+        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var prompt = new TextBlock
+        {
+            Text = F("ForceInstallPrompt", packageName),
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 0, 0, 12)
+        };
+        root.Children.Add(prompt);
+
+        var errorBox = new TextBox
+        {
+            Text = errorText,
+            IsReadOnly = true,
+            TextWrapping = TextWrapping.Wrap,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            MinHeight = 82,
+            MaxHeight = 120,
+            Margin = new Thickness(0, 0, 0, 16)
+        };
+        Grid.SetRow(errorBox, 1);
+        root.Children.Add(errorBox);
+
+        var buttons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        Grid.SetRow(buttons, 2);
+
+        var forceButton = new Button
+        {
+            Content = T("ForceInstall"),
+            MinWidth = 96,
+            Margin = new Thickness(0, 0, 8, 0),
+            IsDefault = true
+        };
+        forceButton.Click += (_, _) =>
+        {
+            accepted = true;
+            dialog.DialogResult = true;
+            dialog.Close();
+        };
+
+        var cancelButton = new Button
+        {
+            Content = T("Cancel"),
+            MinWidth = 86,
+            IsCancel = true
+        };
+        cancelButton.Click += (_, _) =>
+        {
+            accepted = false;
+            dialog.DialogResult = false;
+            dialog.Close();
+        };
+
+        buttons.Children.Add(forceButton);
+        buttons.Children.Add(cancelButton);
+        root.Children.Add(buttons);
+
+        dialog.Content = root;
+        dialog.ShowDialog();
+        return accepted;
+    }
+
+    private static bool IsUpdateIncompatible(AdbCommandResult result)
+    {
+        return result.CombinedText.Contains("INSTALL_FAILED_UPDATE_INCOMPATIBLE", StringComparison.OrdinalIgnoreCase)
+            || result.CombinedText.Contains("signatures do not match", StringComparison.OrdinalIgnoreCase);
     }
 
     private void FlushPendingLogs()

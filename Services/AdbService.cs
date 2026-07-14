@@ -47,6 +47,10 @@ public sealed class AdbService
         return await RunAsync($"-s {Quote(serial)} uninstall {Quote(packageName)}", cancellationToken);
     }
 
+    public async Task<AdbCommandResult> StartPackageAsync(string serial, string packageName, CancellationToken cancellationToken = default)
+    {
+        return await RunAsync($"-s {Quote(serial)} shell monkey -p {Quote(packageName)} -c android.intent.category.LAUNCHER 1", cancellationToken);
+    }
     public async Task<IReadOnlyList<string>> GetUserPackagesAsync(string serial, CancellationToken cancellationToken = default)
     {
         AdbCommandResult result = await RunAsync($"-s {Quote(serial)} shell pm list packages -3", cancellationToken);
@@ -164,6 +168,7 @@ public sealed class AdbService
 
     private static string ResolveAdbPath(string fallbackPath)
     {
+        //当前项目下是否存在adb
         string bundledAdbPath = Path.Combine(AppContext.BaseDirectory, "platform-tools", "adb.exe");
         if (File.Exists(bundledAdbPath))
         {
@@ -174,7 +179,7 @@ public sealed class AdbService
         {
             return fallbackPath;
         }
-
+        //如果没用就使用环境变量的
         string? pathValue = Environment.GetEnvironmentVariable("PATH");
         if (!string.IsNullOrWhiteSpace(pathValue))
         {
@@ -242,6 +247,12 @@ public sealed class AdbService
     }
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="ExitCode">退出代码</param>
+/// <param name="OutputText">标准输出文本</param>
+/// <param name="ErrorText">错误输出文本</param>
 public sealed record AdbCommandResult(int ExitCode, string OutputText, string ErrorText)
 {
     public bool Success => ExitCode == 0;

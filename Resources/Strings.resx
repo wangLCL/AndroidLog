@@ -35,6 +35,19 @@ WPF 版日志查看工具</value></data>
   <data name="ReadingApkPackageStatus" xml:space="preserve"><value>正在读取 APK 包名...</value></data>
   <data name="InstallingApkStatus" xml:space="preserve"><value>正在安装 APK...</value></data>
   <data name="InstallCompleteStatus" xml:space="preserve"><value>安装完成：{0}</value></data>
+  <data name="StartingAppStatus" xml:space="preserve"><value>正在打开应用：{0}</value></data>
+  <data name="StartAppFailedStatus" xml:space="preserve"><value>安装完成，但打开应用失败：{0}</value></data>
+  <data name="ForceInstall" xml:space="preserve"><value>强制安装</value></data>
+  <data name="Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="ForceInstallPrompt" xml:space="preserve"><value>当前设备上已安装同包名应用，但签名不一致，无法覆盖安装。
+
+强制安装会先卸载当前应用，再安装这个 APK。
+
+包名：{0}
+
+是否继续？</value></data>
+  <data name="ForceInstallingStatus" xml:space="preserve"><value>正在强制安装：先卸载 {0}...</value></data>
+  <data name="ForceInstallPackageMissing" xml:space="preserve"><value>安装失败，且无法读取 APK 包名，不能自动强制安装。</value></data>
   <data name="LoadingPackagesFailedStatus" xml:space="preserve"><value>读取用户包名失败：{0}</value></data>
   <data name="LoadingPackagesStatus" xml:space="preserve"><value>已加载 {0} 个用户应用包名</value></data>
   <data name="Locate" xml:space="preserve"><value>定位</value></data>

@@ -35,6 +35,19 @@ WPF log viewer</value></data>
   <data name="ReadingApkPackageStatus" xml:space="preserve"><value>Reading APK package name...</value></data>
   <data name="InstallingApkStatus" xml:space="preserve"><value>Installing APK...</value></data>
   <data name="InstallCompleteStatus" xml:space="preserve"><value>Install complete: {0}</value></data>
+  <data name="StartingAppStatus" xml:space="preserve"><value>Starting app: {0}</value></data>
+  <data name="StartAppFailedStatus" xml:space="preserve"><value>Install complete, but starting the app failed: {0}</value></data>
+  <data name="ForceInstall" xml:space="preserve"><value>Force install</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="ForceInstallPrompt" xml:space="preserve"><value>An app with the same package name is already installed on this device, but the signatures do not match.
+
+Force install will uninstall the current app first, then install this APK.
+
+Package: {0}
+
+Continue?</value></data>
+  <data name="ForceInstallingStatus" xml:space="preserve"><value>Force installing: uninstalling {0} first...</value></data>
+  <data name="ForceInstallPackageMissing" xml:space="preserve"><value>Install failed, and the APK package name could not be read. Force install cannot continue automatically.</value></data>
   <data name="LoadingPackagesFailedStatus" xml:space="preserve"><value>Failed to load user packages: {0}</value></data>
   <data name="LoadingPackagesStatus" xml:space="preserve"><value>Loaded {0} user package(s)</value></data>
   <data name="Locate" xml:space="preserve"><value>Locate</value></data>
