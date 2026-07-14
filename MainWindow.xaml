@@ -179,8 +179,6 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -189,16 +187,17 @@
 
                                     <TextBlock x:Name="ApkAppLabel" Grid.Row="0" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="应用" />
                                     <TextBlock x:Name="ApkAppTextBlock" Grid.Row="0" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="ApkPackageLabel" Grid.Row="1" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="包名" />
-                                    <TextBlock x:Name="ApkPackageTextBlock" Grid.Row="1" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="ApkSizeLabel" Grid.Row="2" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="大小" />
-                                    <TextBlock x:Name="ApkSizeTextBlock" Grid.Row="2" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="ApkVersionLabel" Grid.Row="3" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="版本" />
-                                    <TextBlock x:Name="ApkVersionTextBlock" Grid.Row="3" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="ApkVersionCodeLabel" Grid.Row="4" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="版本号" />
-                                    <TextBlock x:Name="ApkVersionCodeTextBlock" Grid.Row="4" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
-                                    <TextBlock x:Name="ApkPermissionsLabel" Grid.Row="5" Grid.Column="0" Margin="0,0,8,0" Foreground="#475569" Text="权限" />
-                                    <TextBlock x:Name="ApkPermissionsTextBlock" Grid.Row="5" Grid.Column="1" TextWrapping="Wrap" />
+                                    <TextBlock x:Name="ApkVersionLabel" Grid.Row="1" Grid.Column="0" Margin="0,0,8,6" Foreground="#475569" Text="版本" />
+                                    <TextBlock x:Name="ApkVersionTextBlock" Grid.Row="1" Grid.Column="1" Margin="0,0,0,6" TextWrapping="Wrap" />
+                                    <TextBlock x:Name="ApkVersionCodeLabel" Grid.Row="2" Grid.Column="0" Margin="0,0,8,8" Foreground="#475569" Text="版本号" />
+                                    <TextBlock x:Name="ApkVersionCodeTextBlock" Grid.Row="2" Grid.Column="1" Margin="0,0,0,8" TextWrapping="Wrap" />
+                                    <Button x:Name="ApkDetailsButton"
+                                            Grid.Row="3"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Margin="0"
+                                            Click="ApkDetailsButton_Click"
+                                            Content="详情" />
                                 </Grid>
                             </StackPanel>
                         </ScrollViewer>

@@ -29,6 +29,8 @@ WPF 版日志查看工具</value></data>
   <data name="ApkVersion" xml:space="preserve"><value>版本</value></data>
   <data name="ApkVersionCode" xml:space="preserve"><value>版本号</value></data>
   <data name="ApkPermissions" xml:space="preserve"><value>权限</value></data>
+  <data name="ApkDetails" xml:space="preserve"><value>详情</value></data>
+  <data name="ApkDetailsTitle" xml:space="preserve"><value>APK 详情</value></data>
   <data name="None" xml:space="preserve"><value>无</value></data>
   <data name="Unknown" xml:space="preserve"><value>未知</value></data>
   <data name="Instructions" xml:space="preserve"><value>说明：

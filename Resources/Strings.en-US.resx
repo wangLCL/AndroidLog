@@ -29,6 +29,8 @@ WPF log viewer</value></data>
   <data name="ApkVersion" xml:space="preserve"><value>Version</value></data>
   <data name="ApkVersionCode" xml:space="preserve"><value>Version code</value></data>
   <data name="ApkPermissions" xml:space="preserve"><value>Permissions</value></data>
+  <data name="ApkDetails" xml:space="preserve"><value>Details</value></data>
+  <data name="ApkDetailsTitle" xml:space="preserve"><value>APK details</value></data>
   <data name="None" xml:space="preserve"><value>None</value></data>
   <data name="Unknown" xml:space="preserve"><value>Unknown</value></data>
   <data name="Instructions" xml:space="preserve"><value>Notes:
