@@ -21,6 +21,16 @@ WPF 版日志查看工具</value></data>
   <data name="Device" xml:space="preserve"><value>设备</value></data>
   <data name="DragApkInstall" xml:space="preserve"><value>拖入 APK 安装</value></data>
   <data name="InstallApk" xml:space="preserve"><value>安装 APK</value></data>
+  <data name="ApkInfo" xml:space="preserve"><value>APK 信息</value></data>
+  <data name="ApkInfoEmpty" xml:space="preserve"><value>拖入 APK 后显示应用信息。</value></data>
+  <data name="ApkApp" xml:space="preserve"><value>应用</value></data>
+  <data name="ApkPackage" xml:space="preserve"><value>包名</value></data>
+  <data name="ApkSize" xml:space="preserve"><value>大小</value></data>
+  <data name="ApkVersion" xml:space="preserve"><value>版本</value></data>
+  <data name="ApkVersionCode" xml:space="preserve"><value>版本号</value></data>
+  <data name="ApkPermissions" xml:space="preserve"><value>权限</value></data>
+  <data name="None" xml:space="preserve"><value>无</value></data>
+  <data name="Unknown" xml:space="preserve"><value>未知</value></data>
   <data name="Instructions" xml:space="preserve"><value>说明：
 1. 选择设备后，把 APK 拖到上方区域安装。
 2. 拖入 APK 会自动读取包名并填入卸载框。
@@ -33,6 +43,7 @@ WPF 版日志查看工具</value></data>
   <data name="LogStoppedStatus" xml:space="preserve"><value>日志已停止</value></data>
   <data name="DeviceLogClearedStatus" xml:space="preserve"><value>设备日志已清空</value></data>
   <data name="ReadingApkPackageStatus" xml:space="preserve"><value>正在读取 APK 包名...</value></data>
+  <data name="ReadingApkInfoStatus" xml:space="preserve"><value>正在读取 APK 信息...</value></data>
   <data name="InstallingApkStatus" xml:space="preserve"><value>正在安装 APK...</value></data>
   <data name="InstallCompleteStatus" xml:space="preserve"><value>安装完成：{0}</value></data>
   <data name="StartingAppStatus" xml:space="preserve"><value>正在打开应用：{0}</value></data>

@@ -21,6 +21,16 @@ WPF log viewer</value></data>
   <data name="Device" xml:space="preserve"><value>Device</value></data>
   <data name="DragApkInstall" xml:space="preserve"><value>Drop APK to install</value></data>
   <data name="InstallApk" xml:space="preserve"><value>Install APK</value></data>
+  <data name="ApkInfo" xml:space="preserve"><value>APK info</value></data>
+  <data name="ApkInfoEmpty" xml:space="preserve"><value>Drop an APK to show app information.</value></data>
+  <data name="ApkApp" xml:space="preserve"><value>App</value></data>
+  <data name="ApkPackage" xml:space="preserve"><value>Package</value></data>
+  <data name="ApkSize" xml:space="preserve"><value>Size</value></data>
+  <data name="ApkVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="ApkVersionCode" xml:space="preserve"><value>Version code</value></data>
+  <data name="ApkPermissions" xml:space="preserve"><value>Permissions</value></data>
+  <data name="None" xml:space="preserve"><value>None</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Unknown</value></data>
   <data name="Instructions" xml:space="preserve"><value>Notes:
 1. Select a device, then drop an APK into the area above.
 2. The APK package name is read automatically and filled into the uninstall box.
@@ -33,6 +43,7 @@ WPF log viewer</value></data>
   <data name="LogStoppedStatus" xml:space="preserve"><value>Log stopped</value></data>
   <data name="DeviceLogClearedStatus" xml:space="preserve"><value>Device log cleared</value></data>
   <data name="ReadingApkPackageStatus" xml:space="preserve"><value>Reading APK package name...</value></data>
+  <data name="ReadingApkInfoStatus" xml:space="preserve"><value>Reading APK info...</value></data>
   <data name="InstallingApkStatus" xml:space="preserve"><value>Installing APK...</value></data>
   <data name="InstallCompleteStatus" xml:space="preserve"><value>Install complete: {0}</value></data>
   <data name="StartingAppStatus" xml:space="preserve"><value>Starting app: {0}</value></data>

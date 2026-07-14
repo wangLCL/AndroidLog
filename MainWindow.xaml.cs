@@ -57,7 +57,7 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
-    /// ��ʾ�豸�б���ѡ���һ���豸�����û���豸����հ����б���
+    /// 显示设备列表并选择第一个设备，如果没有设备则清空包名列表。
     /// </summary>
     /// <returns></returns>
     private async Task RefreshDevicesAsync()
@@ -115,7 +115,14 @@ public partial class MainWindow : Window
         DropApkLabel.Text = T("DragApkInstall");
         PackageNameLabel.Text = T("PackageName");
         UninstallButton.Content = T("Uninstall");
-        InstructionsTextBlock.Text = T("Instructions");
+        ApkInfoTitleLabel.Text = T("ApkInfo");
+        InstructionsTextBlock.Text = ApkInfoGrid.Visibility == Visibility.Visible ? string.Empty : T("ApkInfoEmpty");
+        ApkAppLabel.Text = T("ApkApp");
+        ApkPackageLabel.Text = T("ApkPackage");
+        ApkSizeLabel.Text = T("ApkSize");
+        ApkVersionLabel.Text = T("ApkVersion");
+        ApkVersionCodeLabel.Text = T("ApkVersionCode");
+        ApkPermissionsLabel.Text = T("ApkPermissions");
 
         TextFilterLabel.Text = T("Text");
         LevelLabel.Text = T("Level");
@@ -232,8 +239,10 @@ public partial class MainWindow : Window
 
         try
         {
-            SetBusy(true, T("ReadingApkPackageStatus"));
-            string? packageName = await adbService.GetApkPackageNameAsync(apkPath);
+            SetBusy(true, T("ReadingApkInfoStatus"));
+            ApkInfo? apkInfo = await adbService.GetApkInfoAsync(apkPath);
+            ShowApkInfo(apkInfo, apkPath);
+            string? packageName = apkInfo?.PackageName;
             if (!string.IsNullOrWhiteSpace(packageName)) SetPackageName(packageName);
 
             SetStatus(T("InstallingApkStatus"));
@@ -740,6 +749,37 @@ public partial class MainWindow : Window
             PackageComboBox.ItemsSource = new[] { packageName }.Concat(packages).ToArray();
         }
         PackageComboBox.Text = packageName;
+    }
+
+    private void ShowApkInfo(ApkInfo? apkInfo, string apkPath)
+    {
+        ApkInfoGrid.Visibility = Visibility.Visible;
+        InstructionsTextBlock.Text = string.Empty;
+
+        ApkAppTextBlock.Text = string.IsNullOrWhiteSpace(apkInfo?.ApplicationLabel)
+            ? Path.GetFileNameWithoutExtension(apkPath)
+            : apkInfo.ApplicationLabel;
+        ApkPackageTextBlock.Text = string.IsNullOrWhiteSpace(apkInfo?.PackageName) ? T("Unknown") : apkInfo.PackageName;
+        ApkSizeTextBlock.Text = FormatFileSize(apkInfo?.FileSizeBytes ?? new FileInfo(apkPath).Length);
+        ApkVersionTextBlock.Text = string.IsNullOrWhiteSpace(apkInfo?.VersionName) ? T("Unknown") : apkInfo.VersionName;
+        ApkVersionCodeTextBlock.Text = string.IsNullOrWhiteSpace(apkInfo?.VersionCode) ? T("Unknown") : apkInfo.VersionCode;
+        ApkPermissionsTextBlock.Text = apkInfo?.Permissions.Count > 0
+            ? string.Join(Environment.NewLine, apkInfo.Permissions)
+            : T("None");
+    }
+
+    private static string FormatFileSize(long bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB"];
+        double size = bytes;
+        int unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.Length - 1)
+        {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return unitIndex == 0 ? $"{bytes} {units[unitIndex]}" : $"{size:0.##} {units[unitIndex]}";
     }
 
     private static bool TryGetApkPath(DragEventArgs e, out string apkPath)

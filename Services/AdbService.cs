@@ -74,6 +74,12 @@ public sealed class AdbService
 
     public async Task<string?> GetApkPackageNameAsync(string apkPath, CancellationToken cancellationToken = default)
     {
+        ApkInfo? info = await GetApkInfoAsync(apkPath, cancellationToken);
+        return info?.PackageName;
+    }
+
+    public async Task<ApkInfo?> GetApkInfoAsync(string apkPath, CancellationToken cancellationToken = default)
+    {
         if (string.IsNullOrWhiteSpace(aaptPath) || !File.Exists(aaptPath))
         {
             return null;
@@ -81,8 +87,35 @@ public sealed class AdbService
 
         AdbCommandResult result = await RunToolAsync(aaptPath, $"dump badging {Quote(apkPath)}", cancellationToken);
         string text = result.CombinedText;
-        Match match = Regex.Match(text, @"package:\s+name='(?<name>[^']+)'", RegexOptions.IgnoreCase);
-        return match.Success ? match.Groups["name"].Value : null;
+        Match packageMatch = Regex.Match(text, @"package:\s+name='(?<name>[^']+)'\s+versionCode='(?<code>[^']*)'\s+versionName='(?<version>[^']*)'", RegexOptions.IgnoreCase);
+        if (!packageMatch.Success)
+        {
+            return null;
+        }
+
+        string label = MatchValue(text, @"application-label(?:-[^:]+)?:'(?<value>[^']*)'");
+        if (string.IsNullOrWhiteSpace(label))
+        {
+            label = MatchValue(text, @"application:\s+label='(?<value>[^']*)'");
+        }
+
+        string[] permissions = Regex
+            .Matches(text, @"uses-permission:\s+name='(?<name>[^']+)'", RegexOptions.IgnoreCase)
+            .Select(match => match.Groups["name"].Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Order(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        var fileInfo = new FileInfo(apkPath);
+        return new ApkInfo(
+            apkPath,
+            Path.GetFileName(apkPath),
+            fileInfo.Exists ? fileInfo.Length : 0,
+            packageMatch.Groups["name"].Value,
+            label,
+            packageMatch.Groups["version"].Value,
+            packageMatch.Groups["code"].Value,
+            permissions);
     }
 
     public async Task<AdbCommandResult> ClearLogcatAsync(string serial, CancellationToken cancellationToken = default)
@@ -251,6 +284,12 @@ public sealed class AdbService
     private static string Quote(string value)
     {
         return "\"" + value.Replace("\"", "\\\"") + "\"";
+    }
+
+    private static string MatchValue(string text, string pattern)
+    {
+        Match match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+        return match.Success ? match.Groups["value"].Value : string.Empty;
     }
 
     /// <summary>
