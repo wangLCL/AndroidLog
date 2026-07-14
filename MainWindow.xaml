@@ -6,6 +6,7 @@
         Height="760"
         MinWidth="1000"
         MinHeight="650"
+        Icon="Assets/app.ico"
         WindowStartupLocation="CenterScreen"
         Background="#F3F6FA"
         FontFamily="Microsoft YaHei UI"
