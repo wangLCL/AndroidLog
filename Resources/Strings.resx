@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve"><value>About</value></data>
+  <data name="AboutMessage" xml:space="preserve"><value>Android Log Viewer
+WPF 版日志查看工具</value></data>
+  <data name="AdbErrorTitle" xml:space="preserve"><value>ADB 错误</value></data>
+  <data name="AnalyzeFile" xml:space="preserve"><value>分析文件</value></data>
+  <data name="ApkInstallFailedTitle" xml:space="preserve"><value>安装失败</value></data>
+  <data name="ApkInstallSuccessTitle" xml:space="preserve"><value>安装完成</value></data>
+  <data name="CaptureCrash" xml:space="preserve"><value>捕获崩溃</value></data>
+  <data name="ClearCrash" xml:space="preserve"><value>清空崩溃</value></data>
+  <data name="ClearDeviceLog" xml:space="preserve"><value>清空设备日志</value></data>
+  <data name="ClearingHistoryLogStatus" xml:space="preserve"><value>正在清空历史日志...</value></data>
+  <data name="ClearView" xml:space="preserve"><value>清空显示</value></data>
+  <data name="Content" xml:space="preserve"><value>内容</value></data>
+  <data name="CrashInfo" xml:space="preserve"><value>崩溃信息</value></data>
+  <data name="Device" xml:space="preserve"><value>设备</value></data>
+  <data name="DragApkInstall" xml:space="preserve"><value>拖入 APK 安装</value></data>
+  <data name="InstallApk" xml:space="preserve"><value>安装 APK</value></data>
+  <data name="Instructions" xml:space="preserve"><value>说明：
+1. 选择设备后，把 APK 拖到上方区域安装。
+2. 拖入 APK 会自动读取包名并填入卸载框。
+3. 下拉框只列出第三方用户应用。</value></data>
+  <data name="Language" xml:space="preserve"><value>语言</value></data>
+  <data name="Level" xml:space="preserve"><value>级别</value></data>
+  <data name="LoadDevicesStatus" xml:space="preserve"><value>已加载 {0} 个设备</value></data>
+  <data name="LoadingDevicesStatus" xml:space="preserve"><value>正在读取设备...</value></data>
+  <data name="ReadingLogStatus" xml:space="preserve"><value>正在读取日志：{0}</value></data>
+  <data name="LogStoppedStatus" xml:space="preserve"><value>日志已停止</value></data>
+  <data name="DeviceLogClearedStatus" xml:space="preserve"><value>设备日志已清空</value></data>
+  <data name="ReadingApkPackageStatus" xml:space="preserve"><value>正在读取 APK 包名...</value></data>
+  <data name="InstallingApkStatus" xml:space="preserve"><value>正在安装 APK...</value></data>
+  <data name="InstallCompleteStatus" xml:space="preserve"><value>安装完成：{0}</value></data>
+  <data name="LoadingPackagesFailedStatus" xml:space="preserve"><value>读取用户包名失败：{0}</value></data>
+  <data name="LoadingPackagesStatus" xml:space="preserve"><value>已加载 {0} 个用户应用包名</value></data>
+  <data name="Locate" xml:space="preserve"><value>定位</value></data>
+  <data name="Log" xml:space="preserve"><value>日志</value></data>
+  <data name="LogReadingPendingStatus" xml:space="preserve"><value>日志读取中，待刷新 {0} 行</value></data>
+  <data name="MessageNoCrash" xml:space="preserve"><value>当前没有捕获到崩溃信息。</value></data>
+  <data name="MessageNoLogs" xml:space="preserve"><value>当前没有可保存的日志。</value></data>
+  <data name="LogSavedStatus" xml:space="preserve"><value>日志已保存：{0}</value></data>
+  <data name="CrashSavedStatus" xml:space="preserve"><value>崩溃信息已保存：{0}</value></data>
+  <data name="CrashClearedStatus" xml:space="preserve"><value>崩溃信息已清空</value></data>
+  <data name="FileAnalyzeCompleteStatus" xml:space="preserve"><value>文件分析完成：{0} 行，崩溃相关 {1} 行</value></data>
+  <data name="LocateKeywordRequiredStatus" xml:space="preserve"><value>请输入定位关键字</value></data>
+  <data name="NotFoundStatus" xml:space="preserve"><value>未找到：{0}</value></data>
+  <data name="LocatedStatus" xml:space="preserve"><value>定位到第 {0} 行：{1}</value></data>
+  <data name="ViewClearedStatus" xml:space="preserve"><value>显示已清空</value></data>
+  <data name="Next" xml:space="preserve"><value>下一个</value></data>
+  <data name="OpenLogFileTitle" xml:space="preserve"><value>选择日志文件</value></data>
+  <data name="PackageName" xml:space="preserve"><value>卸载包名</value></data>
+  <data name="PleaseSelectDevice" xml:space="preserve"><value>请先选择设备。</value></data>
+  <data name="PleaseSelectDeviceAndPackage" xml:space="preserve"><value>请选择设备并输入包名。</value></data>
+  <data name="PromptTitle" xml:space="preserve"><value>提示</value></data>
+  <data name="RefreshDevices" xml:space="preserve"><value>刷新设备</value></data>
+  <data name="SaveCrash" xml:space="preserve"><value>保存崩溃</value></data>
+  <data name="SaveCrashTitle" xml:space="preserve"><value>保存崩溃信息</value></data>
+  <data name="SaveLogTitle" xml:space="preserve"><value>保存日志</value></data>
+  <data name="SaveLogs" xml:space="preserve"><value>保存日志</value></data>
+  <data name="StartLog" xml:space="preserve"><value>开始日志</value></data>
+  <data name="StartClear" xml:space="preserve"><value>开始前清空</value></data>
+  <data name="Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Storage" xml:space="preserve"><value>存储</value></data>
+  <data name="Text" xml:space="preserve"><value>文本</value></data>
+  <data name="Time" xml:space="preserve"><value>时间</value></data>
+  <data name="Uninstall" xml:space="preserve"><value>卸载</value></data>
+  <data name="UninstallCompleteStatus" xml:space="preserve"><value>卸载完成：{0}</value></data>
+  <data name="UninstallFailedTitle" xml:space="preserve"><value>卸载失败</value></data>
+  <data name="UninstallSuccessTitle" xml:space="preserve"><value>卸载完成</value></data>
+</root>

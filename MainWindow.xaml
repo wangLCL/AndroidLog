@@ -69,7 +69,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelText}" Text="设备" />
+            <TextBlock x:Name="DeviceLabel" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelText}" Text="设备" />
             <ComboBox x:Name="DeviceComboBox"
                       Grid.Row="0"
                       Grid.Column="1"
@@ -98,9 +98,16 @@
                           IsChecked="True"
                           Content="开始前清空" />
                 <Button x:Name="StopLogButton" Click="StopLogButton_Click" Content="停止" IsEnabled="False" />
-                <Button Click="ClearDeviceLogButton_Click" Content="清空设备日志" />
-                <Button Click="ClearViewButton_Click" Content="清空显示" />
-                <Button Click="AboutButton_Click" Content="About" />
+                <Button x:Name="ClearDeviceLogButton" Click="ClearDeviceLogButton_Click" Content="清空设备日志" />
+                <Button x:Name="ClearViewButton" Click="ClearViewButton_Click" Content="清空显示" />
+                <Button x:Name="AboutButton" Click="AboutButton_Click" Content="About" />
+                <TextBlock x:Name="LanguageLabel" Margin="12,0,8,0" Style="{StaticResource LabelText}" Text="语言" />
+                <ComboBox x:Name="LanguageComboBox"
+                          Width="104"
+                          SelectionChanged="LanguageComboBox_SelectionChanged">
+                    <ComboBoxItem Content="中文" Tag="zh-CN" IsSelected="True" />
+                    <ComboBoxItem Content="English" Tag="en-US" />
+                </ComboBox>
             </WrapPanel>
         </Grid>
         </Border>
@@ -123,7 +130,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Margin="0,0,0,8" FontWeight="Bold" Text="安装 APK" />
+                    <TextBlock x:Name="InstallApkLabel" Grid.Row="0" Margin="0,0,0,8" FontWeight="Bold" Text="安装 APK" />
                     <Border x:Name="ApkDropBox"
                             Grid.Row="1"
                             AllowDrop="True"
@@ -132,7 +139,8 @@
                             BorderThickness="1"
                             DragEnter="ApkDropBox_DragEnter"
                             Drop="ApkDropBox_Drop">
-                        <TextBlock HorizontalAlignment="Center"
+                        <TextBlock x:Name="DropApkLabel"
+                                   HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    FontSize="18"
                                    FontWeight="Bold"
@@ -140,7 +148,7 @@
                                    Text="拖入 APK 安装" />
                     </Border>
 
-                    <TextBlock Grid.Row="2" Margin="0,18,0,8" FontWeight="Bold" Text="卸载包名" />
+                    <TextBlock x:Name="PackageNameLabel" Grid.Row="2" Margin="0,18,0,8" FontWeight="Bold" Text="卸载包名" />
                     <ComboBox x:Name="PackageComboBox"
                               Grid.Row="3"
                               Margin="0,0,0,8"
@@ -151,7 +159,8 @@
                             Margin="0"
                             Click="UninstallButton_Click"
                             Content="卸载" />
-                    <TextBlock Grid.Row="5"
+                    <TextBlock x:Name="InstructionsTextBlock"
+                               Grid.Row="5"
                                Margin="0,18,0,0"
                                Foreground="#475569"
                                TextWrapping="Wrap"
@@ -195,7 +204,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelText}" Text="文本" />
+                            <TextBlock x:Name="TextFilterLabel" Grid.Row="0" Grid.Column="0" Style="{StaticResource LabelText}" Text="文本" />
                             <TextBox x:Name="TextFilterTextBox"
                                      Grid.Row="0"
                                      Grid.Column="1"
@@ -207,7 +216,7 @@
                                      Grid.Column="4"
                                      TextChanged="FilterChanged" />
 
-                            <TextBlock Grid.Row="0" Grid.Column="6" Style="{StaticResource LabelText}" Text="级别" />
+                            <TextBlock x:Name="LevelLabel" Grid.Row="0" Grid.Column="6" Style="{StaticResource LabelText}" Text="级别" />
                             <ComboBox x:Name="LevelComboBox"
                                       Grid.Row="0"
                                       Grid.Column="7"
@@ -221,19 +230,20 @@
                                 <ComboBoxItem Content="F" />
                             </ComboBox>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelText}" Text="定位" />
+                            <TextBlock x:Name="LocateLabel" Grid.Row="2" Grid.Column="0" Style="{StaticResource LabelText}" Text="定位" />
                             <TextBox x:Name="LocateTextBox"
                                      Grid.Row="2"
                                      Grid.Column="1"
                                      KeyDown="LocateTextBox_KeyDown"
                                      TextChanged="LocateTextBox_TextChanged" />
-                            <Button Grid.Row="2"
+                            <Button x:Name="LocateNextButton"
+                                    Grid.Row="2"
                                     Grid.Column="3"
                                     Margin="0"
                                     Click="LocateNextButton_Click"
                                     Content="下一个" />
 
-                            <TextBlock Grid.Row="2" Grid.Column="6" Style="{StaticResource LabelText}" Text="存储" />
+                            <TextBlock x:Name="StorageLabel" Grid.Row="2" Grid.Column="6" Style="{StaticResource LabelText}" Text="存储" />
                             <ComboBox x:Name="StoreLevelComboBox"
                                       Grid.Row="2"
                                       Grid.Column="7">
@@ -242,7 +252,8 @@
                                 <ComboBoxItem Content="E" />
                                 <ComboBoxItem Content="All" />
                             </ComboBox>
-                            <Button Grid.Row="2"
+                            <Button x:Name="AnalyzeFileButton"
+                                    Grid.Row="2"
                                     Grid.Column="9"
                                     Click="AnalyzeFileButton_Click"
                                     Content="分析文件" />
@@ -256,15 +267,15 @@
                                           VerticalAlignment="Center"
                                           IsChecked="True"
                                           Content="捕获崩溃" />
-                                <Button Click="SaveCrashButton_Click" Content="保存崩溃" />
-                                <Button Click="ClearCrashButton_Click" Content="清空崩溃" />
-                                <Button Click="SaveLogsButton_Click" Content="保存日志" />
+                                <Button x:Name="SaveCrashButton" Click="SaveCrashButton_Click" Content="保存崩溃" />
+                                <Button x:Name="ClearCrashButton" Click="ClearCrashButton_Click" Content="清空崩溃" />
+                                <Button x:Name="SaveLogsButton" Click="SaveLogsButton_Click" Content="保存日志" />
                             </StackPanel>
                         </Grid>
                     </Border>
 
                     <TabControl Grid.Row="1">
-                        <TabItem Header="日志">
+                        <TabItem x:Name="LogTabItem" Header="日志">
                             <DataGrid x:Name="LogDataGrid"
                                       AutoGenerateColumns="False"
                                       Background="White"
@@ -283,15 +294,15 @@
                                       ScrollViewer.ScrollChanged="LogDataGrid_ScrollChanged"
                                       SelectionMode="Single">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Width="120" Binding="{Binding Time}" Header="时间" />
-                                    <DataGridTextColumn Width="54" Binding="{Binding Level}" Header="级别" />
+                                    <DataGridTextColumn x:Name="TimeColumn" Width="120" Binding="{Binding Time}" Header="时间" />
+                                    <DataGridTextColumn x:Name="LevelColumn" Width="54" Binding="{Binding Level}" Header="级别" />
                                     <DataGridTextColumn Width="180" Binding="{Binding Tag}" Header="Tag" />
                                     <DataGridTextColumn Width="70" Binding="{Binding ProcessId}" Header="PID" />
-                                    <DataGridTextColumn Width="*" Binding="{Binding Message}" Header="内容" />
+                                    <DataGridTextColumn x:Name="ContentColumn" Width="*" Binding="{Binding Message}" Header="内容" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </TabItem>
-                        <TabItem Header="崩溃信息">
+                        <TabItem x:Name="CrashTabItem" Header="崩溃信息">
                             <TextBox x:Name="CrashTextBox"
                                      AcceptsReturn="True"
                                      AcceptsTab="True"

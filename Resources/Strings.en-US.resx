@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve"><value>About</value></data>
+  <data name="AboutMessage" xml:space="preserve"><value>Android Log Viewer
+WPF log viewer</value></data>
+  <data name="AdbErrorTitle" xml:space="preserve"><value>ADB Error</value></data>
+  <data name="AnalyzeFile" xml:space="preserve"><value>Analyze File</value></data>
+  <data name="ApkInstallFailedTitle" xml:space="preserve"><value>Install Failed</value></data>
+  <data name="ApkInstallSuccessTitle" xml:space="preserve"><value>Install Complete</value></data>
+  <data name="CaptureCrash" xml:space="preserve"><value>Capture crash</value></data>
+  <data name="ClearCrash" xml:space="preserve"><value>Clear crash</value></data>
+  <data name="ClearDeviceLog" xml:space="preserve"><value>Clear device log</value></data>
+  <data name="ClearingHistoryLogStatus" xml:space="preserve"><value>Clearing history logs...</value></data>
+  <data name="ClearView" xml:space="preserve"><value>Clear view</value></data>
+  <data name="Content" xml:space="preserve"><value>Content</value></data>
+  <data name="CrashInfo" xml:space="preserve"><value>Crash info</value></data>
+  <data name="Device" xml:space="preserve"><value>Device</value></data>
+  <data name="DragApkInstall" xml:space="preserve"><value>Drop APK to install</value></data>
+  <data name="InstallApk" xml:space="preserve"><value>Install APK</value></data>
+  <data name="Instructions" xml:space="preserve"><value>Notes:
+1. Select a device, then drop an APK into the area above.
+2. The APK package name is read automatically and filled into the uninstall box.
+3. The package list only shows third-party user apps.</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Level" xml:space="preserve"><value>Level</value></data>
+  <data name="LoadDevicesStatus" xml:space="preserve"><value>Loaded {0} device(s)</value></data>
+  <data name="LoadingDevicesStatus" xml:space="preserve"><value>Loading devices...</value></data>
+  <data name="ReadingLogStatus" xml:space="preserve"><value>Reading logs: {0}</value></data>
+  <data name="LogStoppedStatus" xml:space="preserve"><value>Log stopped</value></data>
+  <data name="DeviceLogClearedStatus" xml:space="preserve"><value>Device log cleared</value></data>
+  <data name="ReadingApkPackageStatus" xml:space="preserve"><value>Reading APK package name...</value></data>
+  <data name="InstallingApkStatus" xml:space="preserve"><value>Installing APK...</value></data>
+  <data name="InstallCompleteStatus" xml:space="preserve"><value>Install complete: {0}</value></data>
+  <data name="LoadingPackagesFailedStatus" xml:space="preserve"><value>Failed to load user packages: {0}</value></data>
+  <data name="LoadingPackagesStatus" xml:space="preserve"><value>Loaded {0} user package(s)</value></data>
+  <data name="Locate" xml:space="preserve"><value>Locate</value></data>
+  <data name="Log" xml:space="preserve"><value>Log</value></data>
+  <data name="LogReadingPendingStatus" xml:space="preserve"><value>Reading logs, {0} line(s) pending</value></data>
+  <data name="MessageNoCrash" xml:space="preserve"><value>No crash info has been captured.</value></data>
+  <data name="MessageNoLogs" xml:space="preserve"><value>There are no logs to save.</value></data>
+  <data name="LogSavedStatus" xml:space="preserve"><value>Logs saved: {0}</value></data>
+  <data name="CrashSavedStatus" xml:space="preserve"><value>Crash info saved: {0}</value></data>
+  <data name="CrashClearedStatus" xml:space="preserve"><value>Crash info cleared</value></data>
+  <data name="FileAnalyzeCompleteStatus" xml:space="preserve"><value>File analysis complete: {0} lines, {1} crash-related lines</value></data>
+  <data name="LocateKeywordRequiredStatus" xml:space="preserve"><value>Enter a locate keyword</value></data>
+  <data name="NotFoundStatus" xml:space="preserve"><value>Not found: {0}</value></data>
+  <data name="LocatedStatus" xml:space="preserve"><value>Located line {0}: {1}</value></data>
+  <data name="ViewClearedStatus" xml:space="preserve"><value>View cleared</value></data>
+  <data name="Next" xml:space="preserve"><value>Next</value></data>
+  <data name="OpenLogFileTitle" xml:space="preserve"><value>Select log file</value></data>
+  <data name="PackageName" xml:space="preserve"><value>Package name</value></data>
+  <data name="PleaseSelectDevice" xml:space="preserve"><value>Please select a device first.</value></data>
+  <data name="PleaseSelectDeviceAndPackage" xml:space="preserve"><value>Please select a device and enter a package name.</value></data>
+  <data name="PromptTitle" xml:space="preserve"><value>Info</value></data>
+  <data name="RefreshDevices" xml:space="preserve"><value>Refresh devices</value></data>
+  <data name="SaveCrash" xml:space="preserve"><value>Save crash</value></data>
+  <data name="SaveCrashTitle" xml:space="preserve"><value>Save crash info</value></data>
+  <data name="SaveLogTitle" xml:space="preserve"><value>Save logs</value></data>
+  <data name="SaveLogs" xml:space="preserve"><value>Save logs</value></data>
+  <data name="StartLog" xml:space="preserve"><value>Start log</value></data>
+  <data name="StartClear" xml:space="preserve"><value>Clear before start</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Storage" xml:space="preserve"><value>Store</value></data>
+  <data name="Text" xml:space="preserve"><value>Text</value></data>
+  <data name="Time" xml:space="preserve"><value>Time</value></data>
+  <data name="Uninstall" xml:space="preserve"><value>Uninstall</value></data>
+  <data name="UninstallCompleteStatus" xml:space="preserve"><value>Uninstall complete: {0}</value></data>
+  <data name="UninstallFailedTitle" xml:space="preserve"><value>Uninstall Failed</value></data>
+  <data name="UninstallSuccessTitle" xml:space="preserve"><value>Uninstall Complete</value></data>
+</root>

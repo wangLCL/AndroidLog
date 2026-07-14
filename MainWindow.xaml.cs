@@ -37,6 +37,8 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         LogDataGrid.ItemsSource = visibleLogs;
+        SelectInitialLanguage();
+        ApplyLocalization();
         StatusTextBlock.Text = $"ADB: {adbService.AdbPath}";
 
         logcatReader = new LogcatReader(adbService);
@@ -58,22 +60,85 @@ public partial class MainWindow : Window
     {
         try
         {
-            SetBusy(true, "正在读取设备...");
+            SetBusy(true, T("LoadingDevicesStatus"));
             IReadOnlyList<AndroidDevice> devices = await adbService.GetDevicesAsync();
             DeviceComboBox.ItemsSource = devices;
             DeviceComboBox.SelectedIndex = devices.Count > 0 ? 0 : -1;
             if (devices.Count == 0) PackageComboBox.ItemsSource = null;
-            SetStatus($"已加载 {devices.Count} 个设备");
+            SetStatus(F("LoadDevicesStatus", devices.Count));
         }
         catch (Exception ex)
         {
             SetStatus(ex.Message);
-            MessageBox.Show(this, ex.Message, "ADB 错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, ex.Message, T("AdbErrorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
             SetBusy(false);
         }
+    }
+
+    private void SelectInitialLanguage()
+    {
+        string cultureName = Localization.CurrentCulture.Name.StartsWith("en", StringComparison.OrdinalIgnoreCase)
+            ? "en-US"
+            : "zh-CN";
+        Localization.SetCulture(cultureName);
+
+        foreach (object item in LanguageComboBox.Items)
+        {
+            if (item is ComboBoxItem comboBoxItem && string.Equals(comboBoxItem.Tag?.ToString(), cultureName, StringComparison.OrdinalIgnoreCase))
+            {
+                LanguageComboBox.SelectedItem = comboBoxItem;
+                break;
+            }
+        }
+    }
+
+    private void ApplyLocalization()
+    {
+        DeviceLabel.Text = T("Device");
+        RefreshDevicesButton.Content = T("RefreshDevices");
+        StartLogButton.Content = T("StartLog");
+        ClearBeforeStartCheckBox.Content = T("StartClear");
+        StopLogButton.Content = T("Stop");
+        ClearDeviceLogButton.Content = T("ClearDeviceLog");
+        ClearViewButton.Content = T("ClearView");
+        AboutButton.Content = T("About");
+        LanguageLabel.Text = T("Language");
+
+        InstallApkLabel.Text = T("InstallApk");
+        DropApkLabel.Text = T("DragApkInstall");
+        PackageNameLabel.Text = T("PackageName");
+        UninstallButton.Content = T("Uninstall");
+        InstructionsTextBlock.Text = T("Instructions");
+
+        TextFilterLabel.Text = T("Text");
+        LevelLabel.Text = T("Level");
+        LocateLabel.Text = T("Locate");
+        LocateNextButton.Content = T("Next");
+        StorageLabel.Text = T("Storage");
+        AnalyzeFileButton.Content = T("AnalyzeFile");
+        CaptureCrashCheckBox.Content = T("CaptureCrash");
+        SaveCrashButton.Content = T("SaveCrash");
+        ClearCrashButton.Content = T("ClearCrash");
+        SaveLogsButton.Content = T("SaveLogs");
+
+        LogTabItem.Header = T("Log");
+        CrashTabItem.Header = T("CrashInfo");
+        TimeColumn.Header = T("Time");
+        LevelColumn.Header = T("Level");
+        ContentColumn.Header = T("Content");
+    }
+
+    private static string T(string key)
+    {
+        return Localization.Text(key);
+    }
+
+    private static string F(string key, params object[] args)
+    {
+        return Localization.Format(key, args);
     }
 
     private async Task LoadPackagesAsync()
@@ -87,11 +152,11 @@ public partial class MainWindow : Window
             IReadOnlyList<string> packages = await adbService.GetUserPackagesAsync(device.Serial);
             PackageComboBox.ItemsSource = packages;
             PackageComboBox.Text = currentPackage;
-            SetStatus($"已加载 {packages.Count} 个用户应用包名");
+            SetStatus(F("LoadingPackagesStatus", packages.Count));
         }
         catch (Exception ex)
         {
-            SetStatus($"读取用户包名失败：{ex.Message}");
+            SetStatus(F("LoadingPackagesFailedStatus", ex.Message));
         }
     }
 
@@ -100,7 +165,7 @@ public partial class MainWindow : Window
         AndroidDevice? device = GetSelectedDevice();
         if (device is null)
         {
-            MessageBox.Show(this, "请先选择设备。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, T("PleaseSelectDevice"), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
@@ -109,7 +174,7 @@ public partial class MainWindow : Window
 
         if (ClearBeforeStartCheckBox.IsChecked == true)
         {
-            SetStatus("正在清空历史日志...");
+            SetStatus(T("ClearingHistoryLogStatus"));
             logcatReader.Stop();
             flushTimer.Stop();
             ClearVisibleLogs();
@@ -128,7 +193,7 @@ public partial class MainWindow : Window
         flushTimer.Start();
         StartLogButton.IsEnabled = false;
         StopLogButton.IsEnabled = true;
-        SetStatus($"正在读取日志：{device.DisplayName}");
+        SetStatus(F("ReadingLogStatus", device.DisplayName));
     }
 
     private void StopLogcat()
@@ -138,7 +203,7 @@ public partial class MainWindow : Window
         flushTimer.Stop();
         StartLogButton.IsEnabled = true;
         StopLogButton.IsEnabled = false;
-        SetStatus("日志已停止");
+        SetStatus(T("LogStoppedStatus"));
     }
 
     private async Task ClearDeviceLogAsync()
@@ -147,7 +212,7 @@ public partial class MainWindow : Window
         if (device is null) return;
 
         AdbCommandResult result = await adbService.ClearLogcatAsync(device.Serial);
-        SetStatus(result.Success ? "设备日志已清空" : result.CombinedText);
+        SetStatus(result.Success ? T("DeviceLogClearedStatus") : result.CombinedText);
     }
 
     private async Task InstallDroppedApkAsync(DragEventArgs e)
@@ -157,26 +222,26 @@ public partial class MainWindow : Window
         AndroidDevice? device = GetSelectedDevice();
         if (device is null)
         {
-            MessageBox.Show(this, "请先选择设备。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, T("PleaseSelectDevice"), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         try
         {
-            SetBusy(true, "正在读取 APK 包名...");
+            SetBusy(true, T("ReadingApkPackageStatus"));
             string? packageName = await adbService.GetApkPackageNameAsync(apkPath);
             if (!string.IsNullOrWhiteSpace(packageName)) SetPackageName(packageName);
 
-            SetStatus("正在安装 APK...");
+            SetStatus(T("InstallingApkStatus"));
             AdbCommandResult result = await adbService.InstallApkAsync(device.Serial, apkPath, new Progress<string>(SetStatus));
-            SetStatus(result.Success ? $"安装完成：{Path.GetFileName(apkPath)}" : result.CombinedText);
-            MessageBox.Show(this, result.CombinedText, result.Success ? "安装完成" : "安装失败",
+            SetStatus(result.Success ? F("InstallCompleteStatus", Path.GetFileName(apkPath)) : result.CombinedText);
+            MessageBox.Show(this, result.CombinedText, result.Success ? T("ApkInstallSuccessTitle") : T("ApkInstallFailedTitle"),
                 MessageBoxButton.OK, result.Success ? MessageBoxImage.Information : MessageBoxImage.Error);
         }
         catch (Exception ex)
         {
             SetStatus(ex.Message);
-            MessageBox.Show(this, ex.Message, "安装失败", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, ex.Message, T("ApkInstallFailedTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally
         {
@@ -190,13 +255,13 @@ public partial class MainWindow : Window
         string packageName = PackageComboBox.Text.Trim();
         if (device is null || string.IsNullOrWhiteSpace(packageName))
         {
-            MessageBox.Show(this, "请选择设备并输入包名。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, T("PleaseSelectDeviceAndPackage"), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         AdbCommandResult result = await adbService.UninstallPackageAsync(device.Serial, packageName);
-        SetStatus(result.Success ? $"卸载完成：{packageName}" : result.CombinedText);
-        MessageBox.Show(this, result.CombinedText, result.Success ? "卸载完成" : "卸载失败",
+        SetStatus(result.Success ? F("UninstallCompleteStatus", packageName) : result.CombinedText);
+        MessageBox.Show(this, result.CombinedText, result.Success ? T("UninstallSuccessTitle") : T("UninstallFailedTitle"),
             MessageBoxButton.OK, result.Success ? MessageBoxImage.Information : MessageBoxImage.Error);
         await LoadPackagesAsync();
     }
@@ -230,7 +295,7 @@ public partial class MainWindow : Window
 
         if (!pendingLogs.IsEmpty)
         {
-            SetStatus($"日志读取中，待刷新 {pendingLogs.Count} 行");
+            SetStatus(F("LogReadingPendingStatus", pendingLogs.Count));
         }
     }
 
@@ -298,20 +363,20 @@ public partial class MainWindow : Window
             .ToList();
         if (lines.Count == 0)
         {
-            MessageBox.Show(this, "当前没有可保存的日志。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, T("MessageNoLogs"), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         var dialog = new SaveFileDialog
         {
-            Title = "保存日志",
+            Title = T("SaveLogTitle"),
             Filter = "Log files|*.log|Text files|*.txt|All files|*.*",
             FileName = $"logcat-{DateTime.Now:yyyyMMdd-HHmmss}.log"
         };
         if (dialog.ShowDialog(this) != true) return;
 
         File.WriteAllLines(dialog.FileName, lines);
-        SetStatus($"日志已保存：{dialog.FileName}");
+        SetStatus(F("LogSavedStatus", dialog.FileName));
     }
 
     private bool ShouldStoreLog(LogEntry entry)
@@ -325,20 +390,20 @@ public partial class MainWindow : Window
     {
         if (crashLogs.Count == 0)
         {
-            MessageBox.Show(this, "当前没有捕获到崩溃信息。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, T("MessageNoCrash"), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         var dialog = new SaveFileDialog
         {
-            Title = "保存崩溃信息",
+            Title = T("SaveCrashTitle"),
             Filter = "Log files|*.log|Text files|*.txt|All files|*.*",
             FileName = $"crash-{DateTime.Now:yyyyMMdd-HHmmss}.log"
         };
         if (dialog.ShowDialog(this) != true) return;
 
         File.WriteAllLines(dialog.FileName, crashLogs.Select(entry => entry.RawLine));
-        SetStatus($"崩溃信息已保存：{dialog.FileName}");
+        SetStatus(F("CrashSavedStatus", dialog.FileName));
     }
 
     private void ClearCrashLogs()
@@ -347,14 +412,14 @@ public partial class MainWindow : Window
         CrashTextBox.Clear();
         crashContextLinesRemaining = 0;
         autoCrashLogPath = string.Empty;
-        SetStatus("崩溃信息已清空");
+        SetStatus(T("CrashClearedStatus"));
     }
 
     private void AnalyzeLogFile()
     {
         var dialog = new OpenFileDialog
         {
-            Title = "选择日志文件",
+            Title = T("OpenLogFileTitle"),
             Filter = "Log files|*.log;*.txt|All files|*.*",
             Multiselect = false
         };
@@ -379,7 +444,7 @@ public partial class MainWindow : Window
 
         autoFollowLogs = true;
         ScrollLogToBottom();
-        SetStatus($"文件分析完成：{total} 行，崩溃相关 {crashLogs.Count} 行");
+        SetStatus(F("FileAnalyzeCompleteStatus", total, crashLogs.Count));
     }
 
     private void LocateNextLog()
@@ -388,7 +453,7 @@ public partial class MainWindow : Window
         string keyword = LocateTextBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(keyword))
         {
-            SetStatus("请输入定位关键字");
+            SetStatus(T("LocateKeywordRequiredStatus"));
             return;
         }
 
@@ -397,7 +462,7 @@ public partial class MainWindow : Window
         if (foundIndex < 0 && startIndex > 0) foundIndex = FindVisibleLogIndex(keyword, 0);
         if (foundIndex < 0)
         {
-            SetStatus($"未找到：{keyword}");
+            SetStatus(F("NotFoundStatus", keyword));
             return;
         }
 
@@ -406,7 +471,7 @@ public partial class MainWindow : Window
         LogDataGrid.ScrollIntoView(entry);
         lastLocatedLogIndex = foundIndex;
         autoFollowLogs = false;
-        SetStatus($"定位到第 {foundIndex + 1} 行：{keyword}");
+        SetStatus(F("LocatedStatus", foundIndex + 1, keyword));
     }
 
     private int FindVisibleLogIndex(string keyword, int startIndex)
@@ -425,7 +490,7 @@ public partial class MainWindow : Window
         visibleLogs.Clear();
         lastLocatedLogIndex = -1;
         autoFollowLogs = true;
-        SetStatus("显示已清空");
+        SetStatus(T("ViewClearedStatus"));
     }
 
     private void ScrollLogToBottom()
@@ -600,6 +665,20 @@ public partial class MainWindow : Window
         await LoadPackagesAsync();
     }
 
+    private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (LanguageComboBox?.SelectedItem is not ComboBoxItem item || item.Tag is not string cultureName)
+        {
+            return;
+        }
+
+        Localization.SetCulture(cultureName);
+        if (IsInitialized)
+        {
+            ApplyLocalization();
+        }
+    }
+
     private async void StartLogButton_Click(object sender, RoutedEventArgs e)
     {
         await StartLogcatAsync();
@@ -622,7 +701,7 @@ public partial class MainWindow : Window
 
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show(this, "Android Log Viewer\nWPF 版日志查看工具", "About", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show(this, T("AboutMessage"), T("About"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void UninstallButton_Click(object sender, RoutedEventArgs e)
