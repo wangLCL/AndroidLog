@@ -8,7 +8,10 @@ public sealed partial class LogEntry
     /// 创建一个正则表达式，用于解析日志条目的时间、进程ID、线程ID、日志级别、标签和消息。
     /// </summary>
     private static readonly Regex ThreadTimeRegex = CreateThreadTimeRegex();
-
+    /// <summary>
+    /// 命令行输出一行就创建一个Entry 
+    /// </summary>
+    /// <param name="rawLine"></param>
     public LogEntry(string rawLine)
     {
         RawLine = rawLine;
@@ -29,6 +32,13 @@ public sealed partial class LogEntry
 
     public string Message { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// 按照日志等级来过滤日志条目，返回是否匹配
+    /// </summary>
+    /// <param name="textFilter"></param>
+    /// <param name="tagFilter"></param>
+    /// <param name="minimumLevel"></param>
+    /// <returns></returns>
     public bool Matches(string textFilter, string tagFilter, string minimumLevel)
     {
         if (!PassesMinimumLevel(minimumLevel))
@@ -99,6 +109,13 @@ public sealed partial class LogEntry
         };
     }
 
+    /// <summary>
+    /// 解析tag过滤器字符串
+    /// 
+    /// 分割符号：，; 空格、制表符、换行符、竖线
+    /// </summary>
+    /// <param name="tagFilter"></param>
+    /// <returns></returns>
     private static string[] SplitTagFilters(string tagFilter)
     {
         return tagFilter

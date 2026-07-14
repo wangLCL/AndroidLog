@@ -56,6 +56,10 @@ public partial class MainWindow : Window
         };
     }
 
+    /// <summary>
+    /// 显示设备列表并选择第一个设备，如果没有设备则清空包名列表。
+    /// </summary>
+    /// <returns></returns>
     private async Task RefreshDevicesAsync()
     {
         try

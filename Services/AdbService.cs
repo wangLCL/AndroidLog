@@ -9,7 +9,6 @@ namespace AndroidLogViewer.Services;
 public sealed class AdbService
 {
     public const string DefaultAdbPath = @"D:\Android\android-sdk\platform-tools\adb.exe";
-
     private readonly string adbPath;
     private readonly string aaptPath;
 
@@ -36,7 +35,11 @@ public sealed class AdbService
         return ParseDevices(result.OutputText);
     }
 
-    public async Task<AdbCommandResult> InstallApkAsync(string serial, string apkPath, IProgress<string>? progress, CancellationToken cancellationToken = default)
+    public async Task<AdbCommandResult> InstallApkAsync(
+        string serial, 
+        string apkPath, 
+        IProgress<string>? progress, 
+        CancellationToken cancellationToken = default)
     {
         progress?.Report($"Installing: {Path.GetFileName(apkPath)}");
         return await RunAsync($"-s {Quote(serial)} install -r {Quote(apkPath)}", cancellationToken);
@@ -104,6 +107,12 @@ public sealed class AdbService
         };
     }
 
+    /// <summary>
+    /// adb命令
+    /// </summary>
+    /// <param name="arguments"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     private async Task<AdbCommandResult> RunAsync(string arguments, CancellationToken cancellationToken)
     {
         EnsureAdbExists();
@@ -112,26 +121,33 @@ public sealed class AdbService
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = adbPath,
-                Arguments = arguments,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true,
-                StandardOutputEncoding = Encoding.UTF8,
+                FileName = adbPath, //程序入口
+                Arguments = arguments, //参数
+                UseShellExecute = false, //是否使用shell
+                RedirectStandardOutput = true,  //重定向输出
+                RedirectStandardError = true, //重定向错误
+                CreateNoWindow = true, //不创建黑框
+                StandardOutputEncoding = Encoding.UTF8, // 编码
                 StandardErrorEncoding = Encoding.UTF8
             },
-            EnableRaisingEvents = true
+            EnableRaisingEvents = true  //事件通知。
         };
 
         process.Start();
         string output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
         string error = await process.StandardError.ReadToEndAsync(cancellationToken);
         await process.WaitForExitAsync(cancellationToken);
-
+        
         return new AdbCommandResult(process.ExitCode, output, error);
     }
 
+    /// <summary>
+    /// 执行命令 aapt.exe，获取apk的包名
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="arguments"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     private static async Task<AdbCommandResult> RunToolAsync(string fileName, string arguments, CancellationToken cancellationToken)
     {
         using var process = new Process
@@ -166,6 +182,11 @@ public sealed class AdbService
         }
     }
 
+    /// <summary>
+    /// 查找adb.exe的路径，优先使用当前项目下的platform-tools目录，如果不存在就使用传入的fallbackPath，如果还不存在就去环境变量PATH里面找
+    /// </summary>
+    /// <param name="fallbackPath"></param>
+    /// <returns></returns>
     private static string ResolveAdbPath(string fallbackPath)
     {
         //当前项目下是否存在adb
@@ -196,11 +217,19 @@ public sealed class AdbService
         return fallbackPath;
     }
 
+    /// <summary>
+    /// 解析 
+    /// </summary>
+    /// <param name="output"></param>
+    /// <returns></returns>
     private static IReadOnlyList<AndroidDevice> ParseDevices(string output)
     {
+        //解析设备
         var devices = new List<AndroidDevice>();
+        //使用回车分割 ，跳过第一行标题
         foreach (string line in output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Skip(1))
         {
+            // 使用空格分割，去掉空白项
             string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length < 2)
             {
@@ -224,6 +253,11 @@ public sealed class AdbService
         return "\"" + value.Replace("\"", "\\\"") + "\"";
     }
 
+    /// <summary>
+    /// 找出adb的目录下的aapt.exe，如果没有就去build-tools里面找最新的aapt.exe
+    /// </summary>
+    /// <param name="adbPath"></param>
+    /// <returns></returns>
     private static string FindAaptPath(string adbPath)
     {
         string platformToolsPath = Path.GetDirectoryName(adbPath) ?? string.Empty;
@@ -248,7 +282,7 @@ public sealed class AdbService
 }
 
 /// <summary>
-/// 
+/// 执行完 adb 命令后的结果
 /// </summary>
 /// <param name="ExitCode">退出代码</param>
 /// <param name="OutputText">标准输出文本</param>
