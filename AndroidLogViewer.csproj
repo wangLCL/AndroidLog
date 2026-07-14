@@ -13,6 +13,7 @@
     <Content Include="platform-tools\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
 </Project>
