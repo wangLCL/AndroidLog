@@ -94,6 +94,8 @@ Continue?</value></data>
   <data name="Text" xml:space="preserve"><value>Text</value></data>
   <data name="Time" xml:space="preserve"><value>Time</value></data>
   <data name="Uninstall" xml:space="preserve"><value>Uninstall</value></data>
+  <data name="UserGuide" xml:space="preserve"><value>User guide</value></data>
+  <data name="UserGuideMissing" xml:space="preserve"><value>User guide file was not found: {0}</value></data>
   <data name="UninstallCompleteStatus" xml:space="preserve"><value>Uninstall complete: {0}</value></data>
   <data name="UninstallFailedTitle" xml:space="preserve"><value>Uninstall Failed</value></data>
   <data name="UninstallSuccessTitle" xml:space="preserve"><value>Uninstall Complete</value></data>

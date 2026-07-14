@@ -109,6 +109,7 @@ public partial class MainWindow : Window
         StopLogButton.Content = T("Stop");
         ClearDeviceLogButton.Content = T("ClearDeviceLog");
         ClearViewButton.Content = T("ClearView");
+        UserGuideButton.Content = T("UserGuide");
         AboutButton.Content = T("About");
         LanguageLabel.Text = T("Language");
 
@@ -859,6 +860,24 @@ public partial class MainWindow : Window
     private void AboutButton_Click(object sender, RoutedEventArgs e)
     {
         MessageBox.Show(this, T("AboutMessage"), T("About"), MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void UserGuideButton_Click(object sender, RoutedEventArgs e)
+    {
+        string guidePath = Path.Combine(AppContext.BaseDirectory, "docs", "使用说明.md");
+        if (!File.Exists(guidePath))
+        {
+            guidePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "docs", "使用说明.md");
+        }
+
+        guidePath = Path.GetFullPath(guidePath);
+        if (!File.Exists(guidePath))
+        {
+            MessageBox.Show(this, F("UserGuideMissing", guidePath), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo(guidePath) { UseShellExecute = true });
     }
 
     private async void UninstallButton_Click(object sender, RoutedEventArgs e)
