@@ -4,6 +4,9 @@ namespace AndroidLogViewer.Models;
 
 public sealed partial class LogEntry
 {
+    /// <summary>
+    /// 创建一个正则表达式，用于解析日志条目的时间、进程ID、线程ID、日志级别、标签和消息。
+    /// </summary>
     private static readonly Regex ThreadTimeRegex = CreateThreadTimeRegex();
 
     public LogEntry(string rawLine)
@@ -55,6 +58,8 @@ public sealed partial class LogEntry
 
     private void Parse(string rawLine)
     {
+        /// <summary>
+        /// 匹配日志条目的正则表达式模式：
         Match match = ThreadTimeRegex.Match(rawLine);
         if (!match.Success)
         {
