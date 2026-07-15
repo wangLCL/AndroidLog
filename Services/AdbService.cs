@@ -8,7 +8,9 @@ namespace AndroidLogViewer.Services;
 
 public sealed class AdbService
 {
-    public const string DefaultAdbPath = @"D:\Android\android-sdk\platform-tools\adb.exe";
+    //adb路径 
+    public const string DefaultAdbPath = @"platform-tools\adb.exe";
+    //aapt路径
     private readonly string adbPath;
     private readonly string aaptPath;
 
@@ -123,6 +125,11 @@ public sealed class AdbService
         return await RunAsync($"-s {Quote(serial)} logcat -c", cancellationToken);
     }
 
+    /// <summary>
+    /// 日志部分
+    /// </summary>
+    /// <param name="serial"></param>
+    /// <returns></returns>
     public ProcessStartInfo CreateLogcatStartInfo(string serial)
     {
         EnsureAdbExists();
@@ -183,6 +190,7 @@ public sealed class AdbService
     /// <returns></returns>
     private static async Task<AdbCommandResult> RunToolAsync(string fileName, string arguments, CancellationToken cancellationToken)
     {
+        //执行process
         using var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -198,7 +206,7 @@ public sealed class AdbService
             },
             EnableRaisingEvents = true
         };
-
+        ///执行完 ，拿结果
         process.Start();
         string output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
         string error = await process.StandardError.ReadToEndAsync(cancellationToken);
@@ -222,13 +230,13 @@ public sealed class AdbService
     /// <returns></returns>
     private static string ResolveAdbPath(string fallbackPath)
     {
-        //当前项目下是否存在adb
+        //当前项目下是否存在adb  就使用当前文件下的
         string bundledAdbPath = Path.Combine(AppContext.BaseDirectory, "platform-tools", "adb.exe");
         if (File.Exists(bundledAdbPath))
         {
             return bundledAdbPath;
         }
-
+        //如果不存在就使用传入的fallbackPath
         if (File.Exists(fallbackPath))
         {
             return fallbackPath;
@@ -286,8 +294,15 @@ public sealed class AdbService
         return "\"" + value.Replace("\"", "\\\"") + "\"";
     }
 
+    /// <summary>
+    /// 匹配正则表达式，获取命名组value的值，如果没有匹配就返回空字符串
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="pattern"></param>
+    /// <returns></returns>
     private static string MatchValue(string text, string pattern)
     {
+        //文本  正则  忽略大小写
         Match match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
         return match.Success ? match.Groups["value"].Value : string.Empty;
     }

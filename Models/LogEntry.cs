@@ -97,6 +97,7 @@ public sealed partial class LogEntry
 
     private static int LevelRank(string level)
     {
+        // 将日志级别字符串映射到整数等级，以便进行比较
         return level.Trim().ToUpperInvariant() switch
         {
             "V" or "VERBOSE" => 0,
@@ -112,7 +113,11 @@ public sealed partial class LogEntry
     /// <summary>
     /// 解析tag过滤器字符串
     /// 
-    /// 分割符号：，; 空格、制表符、换行符、竖线
+    /// 分割符号：，; 空格、制表符、换行符、竖线    
+    /// 分割后删除空白项目  删除前后空格
+    /// 过滤掉空白的tag
+    /// 去重
+    /// 
     /// </summary>
     /// <param name="tagFilter"></param>
     /// <returns></returns>

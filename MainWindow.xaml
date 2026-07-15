@@ -370,7 +370,7 @@
             <TextBlock x:Name="TextInfoBlock"
                        Grid.Row="0"
                        Grid.Column="1"
-                   Text="祈福没bug,没崩溃"
+                   Text="祈福没bug,没崩溃!不加班。"
                    FontSize="14"
                        Foreground="#66000000"
                        HorizontalAlignment="Center"
