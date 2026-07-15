@@ -96,6 +96,34 @@ Continue?</value></data>
   <data name="Uninstall" xml:space="preserve"><value>Uninstall</value></data>
   <data name="UserGuide" xml:space="preserve"><value>User guide</value></data>
   <data name="UserGuideMissing" xml:space="preserve"><value>User guide file was not found: {0}</value></data>
+  <data name="AdbShell" xml:space="preserve"><value>ADB shell</value></data>
+  <data name="AaptShell" xml:space="preserve"><value>AAPT shell</value></data>
+  <data name="CommonCommands" xml:space="preserve"><value>Commands</value></data>
+  <data name="PlatformToolsMissing" xml:space="preserve"><value>platform-tools directory was not found: {0}</value></data>
+  <data name="CommonCommandsText" xml:space="preserve"><value>ADB common commands:
+
+adb version
+adb devices -l
+adb kill-server
+adb start-server
+adb logcat -v threadtime
+adb logcat -c
+adb install -r app.apk
+adb uninstall package.name
+adb shell pm list packages -3
+adb shell monkey -p package.name -c android.intent.category.LAUNCHER 1
+adb shell screencap -p /sdcard/screen.png
+adb pull /sdcard/screen.png .
+
+AAPT common commands:
+
+aapt version
+aapt dump badging app.apk
+aapt dump permissions app.apk
+aapt dump xmltree app.apk AndroidManifest.xml
+
+Tip:
+The command windows open in the bundled platform-tools directory, so adb.exe and aapt.exe can be used directly.</value></data>
   <data name="UninstallCompleteStatus" xml:space="preserve"><value>Uninstall complete: {0}</value></data>
   <data name="UninstallFailedTitle" xml:space="preserve"><value>Uninstall Failed</value></data>
   <data name="UninstallSuccessTitle" xml:space="preserve"><value>Uninstall Complete</value></data>

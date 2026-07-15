@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -18,16 +19,23 @@ public partial class MainWindow : Window
     private const int MaxVisibleRows = 5000;
     private const int MaxStoredRows = 20000;
     private const int MaxFlushRowsPerTick = 300;
+    private const int WmDeviceChange = 0x0219;
+    private const int DbtDeviceArrival = 0x8000;
+    private const int DbtDeviceRemoveComplete = 0x8004;
+    private const int DbtDevNodesChanged = 0x0007;
 
     private readonly AdbService adbService = new();
     private readonly LogcatReader logcatReader;
     private readonly ConcurrentQueue<LogEntry> pendingLogs = new();
     private readonly DispatcherTimer flushTimer = new();
+    private readonly DispatcherTimer deviceRefreshDebounceTimer = new();
     private readonly ObservableCollection<LogEntry> visibleLogs = [];
     private readonly List<LogEntry> allLogs = [];
     private readonly List<LogEntry> crashLogs = [];
 
     private bool autoFollowLogs = true;
+    private bool refreshingDevices;
+    private string lastDeviceSnapshot = string.Empty;
     private int crashContextLinesRemaining;
     private string autoCrashLogPath = string.Empty;
     private int lastLocatedLogIndex = -1;
@@ -49,38 +57,102 @@ public partial class MainWindow : Window
         flushTimer.Interval = TimeSpan.FromMilliseconds(120);
         flushTimer.Tick += (_, _) => FlushPendingLogs();
 
+        deviceRefreshDebounceTimer.Interval = TimeSpan.FromMilliseconds(900);
+        deviceRefreshDebounceTimer.Tick += async (_, _) =>
+        {
+            deviceRefreshDebounceTimer.Stop();
+            await RefreshDevicesAsync(silent: true);
+        };
+
+        SourceInitialized += (_, _) => AddDeviceChangeHook();
         Loaded += async (_, _) => await RefreshDevicesAsync();
         Closing += (_, _) =>
         {
+            RemoveDeviceChangeHook();
+            deviceRefreshDebounceTimer.Stop();
             flushTimer.Stop();
             logcatReader.Dispose();
         };
+    }
+
+    private void AddDeviceChangeHook()
+    {
+        HwndSource? source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+        source?.AddHook(WndProc);
+    }
+
+    private void RemoveDeviceChangeHook()
+    {
+        HwndSource? source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+        source?.RemoveHook(WndProc);
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WmDeviceChange)
+        {
+            int eventType = wParam.ToInt32();
+            if (eventType is DbtDeviceArrival or DbtDeviceRemoveComplete or DbtDevNodesChanged)
+            {
+                ScheduleDeviceRefresh();
+            }
+        }
+
+        return IntPtr.Zero;
+    }
+
+    private void ScheduleDeviceRefresh()
+    {
+        deviceRefreshDebounceTimer.Stop();
+        deviceRefreshDebounceTimer.Start();
     }
 
     /// <summary>
     /// 显示设备列表并选择第一个设备，如果没有设备则清空包名列表。
     /// </summary>
     /// <returns></returns>
-    private async Task RefreshDevicesAsync()
+    private async Task RefreshDevicesAsync(bool silent = false)
     {
+        if (refreshingDevices) return;
+        refreshingDevices = true;
         try
         {
-            SetBusy(true, T("LoadingDevicesStatus"));
+            if (!silent) SetBusy(true, T("LoadingDevicesStatus"));
             IReadOnlyList<AndroidDevice> devices = await adbService.GetDevicesAsync();
+            string snapshot = CreateDeviceSnapshot(devices);
+            if (silent && string.Equals(snapshot, lastDeviceSnapshot, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            string? selectedSerial = GetSelectedDevice()?.Serial;
             DeviceComboBox.ItemsSource = devices;
-            DeviceComboBox.SelectedIndex = devices.Count > 0 ? 0 : -1;
+            int selectedIndex = selectedSerial is null
+                ? -1
+                : devices.ToList().FindIndex(device => string.Equals(device.Serial, selectedSerial, StringComparison.OrdinalIgnoreCase));
+            DeviceComboBox.SelectedIndex = selectedIndex >= 0 ? selectedIndex : devices.Count > 0 ? 0 : -1;
             if (devices.Count == 0) PackageComboBox.ItemsSource = null;
+            lastDeviceSnapshot = snapshot;
             SetStatus(F("LoadDevicesStatus", devices.Count));
         }
         catch (Exception ex)
         {
             SetStatus(ex.Message);
-            MessageBox.Show(this, ex.Message, T("AdbErrorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!silent)
+            {
+                MessageBox.Show(this, ex.Message, T("AdbErrorTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         finally
         {
-            SetBusy(false);
+            if (!silent) SetBusy(false);
+            refreshingDevices = false;
         }
+    }
+
+    private static string CreateDeviceSnapshot(IReadOnlyList<AndroidDevice> devices)
+    {
+        return string.Join("|", devices.Select(device => $"{device.Serial}:{device.State}:{device.DisplayName}"));
     }
 
     private void SelectInitialLanguage()
@@ -110,6 +182,9 @@ public partial class MainWindow : Window
         ClearDeviceLogButton.Content = T("ClearDeviceLog");
         ClearViewButton.Content = T("ClearView");
         UserGuideButton.Content = T("UserGuide");
+        AdbShellButton.Content = T("AdbShell");
+        AaptShellButton.Content = T("AaptShell");
+        CommonCommandsButton.Content = T("CommonCommands");
         AboutButton.Content = T("About");
         LanguageLabel.Text = T("Language");
 
@@ -878,6 +953,94 @@ public partial class MainWindow : Window
         }
 
         Process.Start(new ProcessStartInfo(guidePath) { UseShellExecute = true });
+    }
+
+    private void AdbShellButton_Click(object sender, RoutedEventArgs e)
+    {
+        OpenToolCommandLine("adb version");
+    }
+
+    private void AaptShellButton_Click(object sender, RoutedEventArgs e)
+    {
+        OpenToolCommandLine("aapt version");
+    }
+
+    private void CommonCommandsButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowTextDialog(T("CommonCommands"), T("CommonCommandsText"));
+    }
+
+    private void OpenToolCommandLine(string startupCommand)
+    {
+        string platformToolsPath = GetPlatformToolsPath();
+        if (!Directory.Exists(platformToolsPath))
+        {
+            MessageBox.Show(this, F("PlatformToolsMissing", platformToolsPath), T("PromptTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "cmd.exe",
+            Arguments = $"/k {startupCommand}",
+            WorkingDirectory = platformToolsPath,
+            UseShellExecute = true
+        });
+    }
+
+    private static string GetPlatformToolsPath()
+    {
+        string outputPath = Path.Combine(AppContext.BaseDirectory, "platform-tools");
+        if (Directory.Exists(outputPath))
+        {
+            return outputPath;
+        }
+
+        return Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "platform-tools"));
+    }
+
+    private void ShowTextDialog(string title, string text)
+    {
+        var dialog = new Window
+        {
+            Title = title,
+            Owner = this,
+            Width = 680,
+            Height = 560,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            ShowInTaskbar = false
+        };
+
+        var root = new Grid { Margin = new Thickness(14) };
+        root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var textBox = new TextBox
+        {
+            Text = text,
+            IsReadOnly = true,
+            AcceptsReturn = true,
+            TextWrapping = TextWrapping.NoWrap,
+            FontFamily = new FontFamily("Consolas"),
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+        root.Children.Add(textBox);
+
+        var closeButton = new Button
+        {
+            Content = "OK",
+            MinWidth = 90,
+            Margin = new Thickness(0, 12, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            IsDefault = true
+        };
+        closeButton.Click += (_, _) => dialog.Close();
+        Grid.SetRow(closeButton, 1);
+        root.Children.Add(closeButton);
+
+        dialog.Content = root;
+        dialog.ShowDialog();
     }
 
     private async void UninstallButton_Click(object sender, RoutedEventArgs e)

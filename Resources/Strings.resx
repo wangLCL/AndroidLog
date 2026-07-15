@@ -96,6 +96,34 @@ WPF 版日志查看工具</value></data>
   <data name="Uninstall" xml:space="preserve"><value>卸载</value></data>
   <data name="UserGuide" xml:space="preserve"><value>使用说明</value></data>
   <data name="UserGuideMissing" xml:space="preserve"><value>找不到使用说明文件：{0}</value></data>
+  <data name="AdbShell" xml:space="preserve"><value>ADB 命令行</value></data>
+  <data name="AaptShell" xml:space="preserve"><value>AAPT 命令行</value></data>
+  <data name="CommonCommands" xml:space="preserve"><value>常用指令</value></data>
+  <data name="PlatformToolsMissing" xml:space="preserve"><value>找不到 platform-tools 目录：{0}</value></data>
+  <data name="CommonCommandsText" xml:space="preserve"><value>ADB 常用指令：
+
+adb version
+adb devices -l
+adb kill-server
+adb start-server
+adb logcat -v threadtime
+adb logcat -c
+adb install -r app.apk
+adb uninstall package.name
+adb shell pm list packages -3
+adb shell monkey -p package.name -c android.intent.category.LAUNCHER 1
+adb shell screencap -p /sdcard/screen.png
+adb pull /sdcard/screen.png .
+
+AAPT 常用指令：
+
+aapt version
+aapt dump badging app.apk
+aapt dump permissions app.apk
+aapt dump xmltree app.apk AndroidManifest.xml
+
+提示：
+命令行会打开到内置 platform-tools 目录，可以直接使用 adb.exe 和 aapt.exe。</value></data>
   <data name="UninstallCompleteStatus" xml:space="preserve"><value>卸载完成：{0}</value></data>
   <data name="UninstallFailedTitle" xml:space="preserve"><value>卸载失败</value></data>
   <data name="UninstallSuccessTitle" xml:space="preserve"><value>卸载完成</value></data>
